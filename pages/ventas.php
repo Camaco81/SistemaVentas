@@ -3,7 +3,7 @@
 <?php  
 include("../conn/conexio.php"); ?>
 <div class="text-center">
-  <a href="dashboar.php">Regresar a Inicio</a>
+  
 <h1>Ventas</h1>
 </div>
 <main class="p-3">
@@ -19,10 +19,15 @@ include("../conn/conexio.php"); ?>
   <h3>Total de la venta</h3>
   <p class="text-muted">(Precio total de todos los productos seleccionados tanto en dolares como bolivares)</p>
   <p id="total" class="fw-semibold"></p> 
-   <button class="btn btn-primary" id="registrarVentaBtn">Registra Venta</button>
-   <button class="btn btn-info" id="generarFacturaBtn">Generar factura</button>
+   <button class="btn btn-danger" id="registrarVentaBtn">Generar factura</button>
+
+ 
    
 </div>
+<div class=" d-flex justify-content-center  ">
+  <a href="dashboar.php" class="text-decoration-none"><i class="bi bi-arrow-left"></i> Regresar a Inicio</a>
+</div>
+
 </main>
 <script
   src="https://code.jquery.com/jquery-3.7.1.js"
@@ -32,130 +37,272 @@ include("../conn/conexio.php"); ?>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <script>
- $(document).ready(function() {
- $("#busqueda").on("keyup", function() {
- var termino = $(this).val();
- $.ajax({
- url: "buscar_productos.php",
- data: { termino: termino },
- success: function(data) {
- $("#resultados").html(data);
- }
- });
- });
-$("#registrarVentaBtn").on("click", function() {
-var productos = [];
-var totalDolares = parseFloat($('#total').text().split(':')[1].trim().split('$')[0].trim());
- var totalBolivares = parseFloat($('#total').text().split('Total en bolivares:')[1].trim().split('bs')[0].trim());
+//  $(document).ready(function() {
+//  $("#busqueda").on("keyup", function() {
+//  var termino = $(this).val();
+//  $.ajax({
+//  url: "buscar_productos.php",
+//  data: { termino: termino },
+//  success: function(data) {
+//  $("#resultados").html(data);
+//  }
+//  });
+//  });
+// $("#registrarVentaBtn").on("click", function() {
+// var productos = [];
+// var totalDolares = parseFloat($('#total').text().split(':')[1].trim().split('$')[0].trim());
+//  var totalBolivares = parseFloat($('#total').text().split('Total en bolivares:')[1].trim().split('bs')[0].trim());
 
- $(".producto_seleccionado").each(function() {
- var textoProducto = $(this).text();
- var partes = textoProducto.split(' - ');
- var nombreCantidad = partes[0].split('(');
- var nombre = nombreCantidad[0].trim();
- var cantidad = parseInt(nombreCantidad[1].replace(')', '').trim());
- var subtotalDolares = parseFloat(partes[1].trim().split(' ')[0]);
- var subtotalBolivares = parseFloat(partes[2].trim().split(' ')[0]);
+//  $(".producto_seleccionado").each(function() {
+//  var textoProducto = $(this).text();
+//  var partes = textoProducto.split(' - ');
+//  var nombreCantidad = partes[0].split('(');
+//  var nombre = nombreCantidad[0].trim();
+//  var cantidad = parseInt(nombreCantidad[1].replace(')', '').trim());
+//  var subtotalDolares = parseFloat(partes[1].trim().split(' ')[0]);
+//  var subtotalBolivares = parseFloat(partes[2].trim().split(' ')[0]);
 
- productos.push({
- nombre: nombre,
- cantidad: cantidad,
- subtotalDolares: subtotalDolares,
- subtotalBolivares: subtotalBolivares
- });
- });
+//  productos.push({
+//  nombre: nombre,
+//  cantidad: cantidad,
+//  subtotalDolares: subtotalDolares,
+//  subtotalBolivares: subtotalBolivares
+//  });
+//  });
 
- // Ahora tenemos la información de los productos y el total,
- // podemos enviarla al servidor para registrar la venta.
- registrarVentaEnBD(productos, totalDolares, totalBolivares);
-});
-
- $("#generarFacturaBtn").on("click", function() {
- generarFacturaPDF();
- });
-
-  $(document).on("change", ".seleccionar", function() {
-var row = $(this).closest('tr'); // Suponiendo que cada producto está dentro de un <tr>
- var nombre = row.find('.nombre').text(); // Ajusta el selector según tu HTML
- var cantidad = row.find('.cantidad').val();
- var precioText = row.find('.precio_en_dolares').text();
- var precioIntDolar= parseFloat(precioText);
- var precioTextV = row.find('.precio_en_bolivares').text();
- var precioIntBolivar= parseFloat(precioTextV);
- if ($(this).is(":checked")) {
- agregarProductoALista(nombre, cantidad, precioIntDolar,precioIntBolivar);
- } else {
- // Eliminar el producto de la lista
- }
- calcularTotal();
- });
-
- function agregarProductoALista(nombre, cantidad, precioIntDolar,precioIntBolivar) {
-// Crear un elemento HTML para el producto y agregarlo a #productos_seleccionados
- var html = `<div class="producto_seleccionado">
- ${nombre} (${cantidad}) - <span class="subtotalDolares"> ${cantidad * precioIntDolar} </span>$ - <span class="subtotalBolivares">${cantidad*precioIntBolivar}</span>bs
- </div>`;
- $("#productos_seleccionados").append(html);
- }
+//  // Ahora tenemos la información de los productos y el total,
+//  // podemos enviarla al servidor para registrar la venta.
+//   generarFacturaPDF();
+//  registrarVentaEnBD(productos, totalDolares, totalBolivares);
+// });
 
 
-function calcularTotal() {
- let totalDolares = 0;
- let totalBolivares = 0;
 
- // Seleccionamos todos los elementos que representan productos seleccionados
- $('.producto_seleccionado').each(function() {
- // Obtenemos el precio y la cantidad de cada producto
- const subtotalDolares = parseFloat($(this).find('.subtotalDolares').text());
-const subtotalBolivares = parseFloat($(this).find('.subtotalBolivares').text());
- totalDolares += subtotalDolares;
- totalBolivares += subtotalBolivares;
- });
+//   $(document).on("change", ".seleccionar", function() {
+// var row = $(this).closest('tr'); // Suponiendo que cada producto está dentro de un <tr>
+//  var nombre = row.find('.nombre').text(); // Ajusta el selector según tu HTML
+//  var cantidad = row.find('.cantidad').val();
+//  var precioText = row.find('.precio_en_dolares').text();
+//  var precioIntDolar= parseFloat(precioText);
+//  var precioTextV = row.find('.precio_en_bolivares').text();
+//  var precioIntBolivar= parseFloat(precioTextV);
+//  if ($(this).is(":checked")) {
+//  agregarProductoALista(nombre, cantidad, precioIntDolar,precioIntBolivar);
+//  } else {
+//  // Eliminar el producto de la lista
+//  }
+//  calcularTotal();
+//  });
 
- // Mostramos el total en un elemento HTML (ajusta el selector según tu HTML)
- $('#total').text('Total en dolares: ' + totalDolares.toFixed(2)+'$'+' Total en bolivares:  '+ totalBolivares.toFixed(2)+'bs' );
-}
+//  function agregarProductoALista(nombre, cantidad, precioIntDolar,precioIntBolivar) {
+// // Crear un elemento HTML para el producto y agregarlo a #productos_seleccionados
+//  var html = `<div class="producto_seleccionado">
+//  ${nombre} (${cantidad}) - <span class="subtotalDolares"> ${cantidad * precioIntDolar} </span>$ - <span class="subtotalBolivares">${cantidad*precioIntBolivar}</span>bs
+//  </div>`;
+//  $("#productos_seleccionados").append(html);
+//  }
 
- function generarFacturaPDF() {
-        const elementoParaConvertir = document.getElementById('productos_Container'); // El contenedor de los productos y el total
 
- html2canvas(elementoParaConvertir).then(function(canvas) {
- const imgData = canvas.toDataURL('image/png');
- const pdf = new jspdf.jsPDF();
- const imgProps= pdf.getImageProperties(imgData);
- const pdfWidth = pdf.internal.pageSize.getWidth();
- const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+// function calcularTotal() {
+//  let totalDolares = 0;
+//  let totalBolivares = 0;
 
- pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
- pdf.save('factura_venta.pdf');
-});
- }
+//  // Seleccionamos todos los elementos que representan productos seleccionados
+//  $('.producto_seleccionado').each(function() {
+//  // Obtenemos el precio y la cantidad de cada producto
+//  const subtotalDolares = parseFloat($(this).find('.subtotalDolares').text());
+// const subtotalBolivares = parseFloat($(this).find('.subtotalBolivares').text());
+//  totalDolares += subtotalDolares;
+//  totalBolivares += subtotalBolivares;
+//  });
 
- function registrarVentaEnBD(productos, totalDolares, totalBolivares) {
- $.ajax({
- url: "registrar_venta.php", // Archivo PHP que procesará el registro
- method: "POST",
- data: {
- productos: JSON.stringify(productos), // Convertimos el array de productos a JSON
- totalDolares: totalDolares,
- totalBolivares: totalBolivares
- },
-success: function(response) {
-     Swal.fire({
+//  // Mostramos el total en un elemento HTML (ajusta el selector según tu HTML)
+//  $('#total').text('Total en dolares: ' + totalDolares.toFixed(2)+'$'+' Total en bolivares:  '+ totalBolivares.toFixed(2)+'bs' );
+// }
+
+//  function generarFacturaPDF() {
+//         const elementoParaConvertir = document.getElementById('productos_Container'); // El contenedor de los productos y el total
+
+//  html2canvas(elementoParaConvertir).then(function(canvas) {
+//  const imgData = canvas.toDataURL('image/png');
+//  const pdf = new jspdf.jsPDF();
+//  const imgProps= pdf.getImageProperties(imgData);
+//  const pdfWidth = pdf.internal.pageSize.getWidth();
+//  const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+//  pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+//  pdf.save('factura_venta.pdf');
+// });
+//  }
+
+//  function registrarVentaEnBD(productos, totalDolares, totalBolivares) {
+//  $.ajax({
+//  url: "registrar_venta.php", // Archivo PHP que procesará el registro
+//  method: "POST",
+//  data: {
+//  productos: JSON.stringify(productos), // Convertimos el array de productos a JSON
+//  totalDolares: totalDolares,
+//  totalBolivares: totalBolivares
+//  },
+// success: function(response) {
+//      Swal.fire({
+//                     icon: "success",
+//                     title: response,
+//                 });
+//   // Puedes mostrar un mensaje de éxito o error
+//  // Opcional: Limpiar la lista de productos seleccionados
+//  $("#productos_seleccionados").empty();
+//  $("#total").text('');
+// },
+//  error: function(xhr, status, error) {
+//  console.error("Error al registrar la venta:", error);
+//  alert("Error al registrar la venta.");
+//  }
+//  });
+// }
+// });
+
+    $(document).ready(function() {
+    $("#busqueda").on("keyup", function() {
+        var termino = $(this).val();
+        $.ajax({
+            url: "buscar_productos.php",
+            data: { termino: termino },
+            success: function(data) {
+                $("#resultados").html(data);
+            }
+        });
+    });
+
+    $("#registrarVentaBtn").on("click", function() {
+        var productos = [];
+        var totalDolares = parseFloat($('#total').text().split(':')[1].trim().split('$')[0].trim());
+        var totalBolivares = parseFloat($('#total').text().split('Total en bolivares:')[1].trim().split('bs')[0].trim());
+
+        $(".producto_seleccionado").each(function() {
+            var textoProducto = $(this).text();
+            var partes = textoProducto.split(' - ');
+            var nombreCantidad = partes[0].split('(');
+            var nombre = nombreCantidad[0].trim();
+            var cantidad = parseInt(nombreCantidad[1].replace(')', '').trim());
+            var subtotalDolares = parseFloat(partes[1].trim().split(' ')[0]);
+            var subtotalBolivares = parseFloat(partes[2].trim().split(' ')[0]);
+
+            productos.push({
+                nombre: nombre,
+                cantidad: cantidad,
+                subtotalDolares: subtotalDolares,
+                subtotalBolivares: subtotalBolivares
+            });
+        });
+
+        generarFacturaPDF();
+        registrarVentaEnBD(productos, totalDolares, totalBolivares);
+    });
+
+    $(document).on("change", ".seleccionar", function() {
+        var row = $(this).closest('tr');
+        var nombre = row.find('.nombre').text();
+        var cantidadSeleccionada = parseInt(row.find('.cantidad').val());
+        var precioText = row.find('.precio_en_dolares').text();
+        var precioIntDolar = parseFloat(precioText);
+        var precioTextV = row.find('.precio_en_bolivares').text();
+        var precioIntBolivar = parseFloat(precioTextV);
+        var stockDisponible = parseInt(row.find('.stock').text()); // Asumiendo que tienes una clase 'stock' en tu fila de resultados
+
+        if ($(this).is(":checked")) {
+            if (cantidadSeleccionada > stockDisponible) {
+                Swal.fire({
+                    icon: "warning",
+                    title: "Stock Insuficiente",
+                    text: `No hay suficiente stock de ${nombre}. Stock disponible: ${stockDisponible}`,
+                });
+                $(this).prop("checked", false); // Desmarca el checkbox
+                row.find('.cantidad').val(1); // Restablece la cantidad a 1 o un valor válido
+                return;
+            }
+            agregarProductoALista(nombre, cantidadSeleccionada, precioIntDolar, precioIntBolivar);
+        } else {
+            // Eliminar el producto de la lista (tendrías que implementar esta lógica si es necesario)
+            eliminarProductoDeLista(nombre); // Ejemplo de función para eliminar
+        }
+        calcularTotal();
+    });
+
+    function agregarProductoALista(nombre, cantidad, precioIntDolar, precioIntBolivar) {
+        var productoExistente = $(`#productos_seleccionados div:contains('${nombre} (')`);
+        if (productoExistente.length > 0) {
+            // Si el producto ya existe, actualiza la cantidad (opcional, según tu lógica)
+            var cantidadActual = parseInt(productoExistente.text().split('(')[1].split(')')[0].trim());
+            var nuevaCantidad = cantidadActual + cantidad;
+            var subtotalDolaresActual = parseFloat(productoExistente.find('.subtotalDolares').text());
+            var subtotalBolivaresActual = parseFloat(productoExistente.find('.subtotalBolivares').text());
+            productoExistente.html(`${nombre} (${nuevaCantidad}) - <span class="subtotalDolares"> ${(nuevaCantidad * precioIntDolar).toFixed(2)} </span>$ - <span class="subtotalBolivares">${(nuevaCantidad * precioIntBolivar).toFixed(2)}</span>bs`);
+        } else {
+            var html = `<div class="producto_seleccionado">
+                ${nombre} (${cantidad}) - <span class="subtotalDolares"> ${(cantidad * precioIntDolar).toFixed(2)} </span>$ - <span class="subtotalBolivares">${(cantidad * precioIntBolivar).toFixed(2)}</span>bs
+            </div>`;
+            $("#productos_seleccionados").append(html);
+        }
+    }
+
+    function eliminarProductoDeLista(nombre) {
+        $(`#productos_seleccionados div:contains('${nombre} (')`).remove();
+    }
+
+
+    function calcularTotal() {
+        let totalDolares = 0;
+        let totalBolivares = 0;
+
+        $('.producto_seleccionado').each(function() {
+            const subtotalDolares = parseFloat($(this).find('.subtotalDolares').text());
+            const subtotalBolivares = parseFloat($(this).find('.subtotalBolivares').text());
+            totalDolares += subtotalDolares;
+            totalBolivares += subtotalBolivares;
+        });
+
+        $('#total').text('Total en dolares: ' + totalDolares.toFixed(2) + '$' + ' Total en bolivares:  ' + totalBolivares.toFixed(2) + 'bs');
+    }
+
+    function generarFacturaPDF() {
+        const elementoParaConvertir = document.getElementById('productos_Container');
+
+        html2canvas(elementoParaConvertir).then(function(canvas) {
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new jspdf.jsPDF();
+            const imgProps = pdf.getImageProperties(imgData);
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+            pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+            pdf.save('factura_venta.pdf');
+        });
+    }
+
+    function registrarVentaEnBD(productos, totalDolares, totalBolivares) {
+        $.ajax({
+            url: "registrar_venta.php",
+            method: "POST",
+            data: {
+                productos: JSON.stringify(productos),
+                totalDolares: totalDolares,
+                totalBolivares: totalBolivares
+            },
+            success: function(response) {
+                Swal.fire({
                     icon: "success",
                     title: response,
                 });
-  // Puedes mostrar un mensaje de éxito o error
- // Opcional: Limpiar la lista de productos seleccionados
- $("#productos_seleccionados").empty();
- $("#total").text('');
-},
- error: function(xhr, status, error) {
- console.error("Error al registrar la venta:", error);
- alert("Error al registrar la venta.");
- }
- });
-}
+                $("#productos_seleccionados").empty();
+                $("#total").text('');
+            },
+            error: function(xhr, status, error) {
+                console.error("Error al registrar la venta:", error);
+                alert("Error al registrar la venta.");
+            }
+        });
+    }
 });
 
 

@@ -15,24 +15,29 @@ include("../conn/conexio.php");
 if (isset($_POST['registrar_producto'])) {
     $nombre=$_POST['nombre'];
     $precio_en_dolares=$_POST['precio_en_dolares'];
+    $cantidad=$_POST['cantidad'];
     
-    $query="INSERT INTO productos(nombre,precio_en_dolares) VALUES('$nombre','$precio_en_dolares')";
+    $query="INSERT INTO productos(nombre,precio_en_dolares,cantidad) VALUES('$nombre','$precio_en_dolares','$cantidad')";
     $result=mysqli_query($conex, $query);
 
     if (!$result) {
       die("query fallo");
     }else{
-        echo "<script>
-           alert('Producto registrado exitosamente')
+        echo '<script>
+          Swal.fire({
+                    icon: "success",
+                    title: "Operación exitosa",
+                    text: "Producto registrado exitosamente."
+                });
 
-           </script>";
+           </script> ';
   }
 
  }
 
 ?>
 <div class="text-center">
-  <a href="dashboar.php">Regresar a Inicio</a>
+  <!-- <a href="dashboar.php">Regresar a Inicio</a> -->
 
 <h1 >Registrar Productos</h1>
 </div>
@@ -42,8 +47,10 @@ if (isset($_POST['registrar_producto'])) {
   <form action="productos.php" method="POST" class="d-flex flex-column p-2">
     <label class="fw-semibold" for="">Nombre del producto</label>
     <input class="mb-2" type="text" name="nombre">
-    <label class="fw-semibold" for="">Precio del producto en $ </label>
+    <label class="fw-semibold" for="">Precio del producto en $(por unidad) </label>
     <input class="mb-2" type="text" name="precio_en_dolares">
+     <label class="fw-semibold" for="">Cantidad(unidades)</label>
+    <input class="mb-2" type="text" name="cantidad">
     <button type="submit" class="btn btn-secondary" name="registrar_producto">Registar producto</button>
   </form>
 </div>
@@ -56,8 +63,9 @@ if (isset($_POST['registrar_producto'])) {
                 <tr>
                  
                   <th scope="col">Nombre del producto</th>
-                  <th scope="col">Precio en $</th>
-                  <th scope="col">Precio en bs</th>
+                  <th scope="col">Cantidad</th>
+                  <th scope="col">Precio en $ <br>(por unidad)</th>
+                  <th scope="col">Precio en bs <br>(por unidad)</th>
                   <th scope="col">Acciones</th>
                 </tr>
               </thead>
@@ -70,13 +78,16 @@ if (isset($_POST['registrar_producto'])) {
               <tr>
 
                 <td ><?php echo $row['nombre'] ?></td>
+                <td ><?php echo $row['cantidad'] ?></td>
                 <td ><?php echo $row['precio_en_dolares'] ?></td>
                 <td ><?php echo $row['precio_en_dolares']*$tasa_cambio ?></td>
 
                 <td class="d-flex ">
-                  <a href="editar_cliente.php?id=<?php echo $row['id']?>" class=" d-flex m-1 text-decoration-none btn btn-secondary"><i class="bi bi-pencil-fill"></i></a>
-                </td>
-
+                  <a href="editar_producto.php?id=<?php echo $row['id']?>" class=" d-flex m-1 text-decoration-none btn btn-secondary"><i class="bi bi-pencil-fill"></i></a>
+                
+            
+                  <a href="eliminar_producto.php?id=<?php echo $row['id']?>" class=" d-flex m-1 text-decoration-none btn btn-danger"> <i class="bi bi-trash-fill"></i></a>
+                  </td>
 
               </tr>
 
@@ -85,6 +96,10 @@ if (isset($_POST['registrar_producto'])) {
         </tbody>
              
  </table>
+  <div class=" d-flex justify-content-center mb-3 ">
+  <a href="dashboar.php" class="text-decoration-none"><i class="bi bi-arrow-left"></i> Regresar a Inicio</a>
+</div>
+
 </div>
 
 

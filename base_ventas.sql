@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 21, 2025 at 04:00 PM
+-- Generation Time: May 19, 2025 at 05:13 PM
 -- Server version: 10.1.38-MariaDB
 -- PHP Version: 7.3.2
 
@@ -174,7 +174,11 @@ INSERT INTO `detalle_venta` (`id`, `nombre_producto`, `cantidad`, `subtotal_dola
 (1, 'Arroz Mari', 2, 3, 235.5),
 (2, 'Caraotas la coste', 2, 6, 471),
 (3, 'Arroz Mari', 4, 6, 471),
-(4, 'Harina deli', 4, 9.6, 753.6);
+(4, 'Harina deli', 4, 9.6, 753.6),
+(5, 'Harina deli', 3, 7.2, 677.232),
+(7, 'Arroz Mari', 1, 1.5, 141.09),
+(8, 'Arroz Mari', 2, 3, 282.18),
+(9, 'Champu Liso 250ml', 4, 42, 3950.52);
 
 -- --------------------------------------------------------
 
@@ -186,6 +190,7 @@ CREATE TABLE `productos` (
   `id` int(10) NOT NULL,
   `nombre` varchar(50) COLLATE utf32_unicode_ci NOT NULL,
   `precio_en_dolares` double NOT NULL,
+  `cantidad` int(30) NOT NULL,
   `precio_en_bolivares` double NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf32 COLLATE=utf32_unicode_ci;
 
@@ -193,11 +198,11 @@ CREATE TABLE `productos` (
 -- Dumping data for table `productos`
 --
 
-INSERT INTO `productos` (`id`, `nombre`, `precio_en_dolares`, `precio_en_bolivares`) VALUES
-(1, 'Harina deli', 2.4, 0),
-(2, 'Arroz Mari', 1.5, 0),
-(3, 'Harina pan', 0.8, 0),
-(4, 'Caraotas la coste', 3, 0);
+INSERT INTO `productos` (`id`, `nombre`, `precio_en_dolares`, `cantidad`, `precio_en_bolivares`) VALUES
+(1, 'Harina deli', 2.4, 22, 0),
+(2, 'Arroz Mari', 1.5, 21, 0),
+(6, 'Champu Liso 250ml', 10.5, 1, 0),
+(9, 'Caraotas la coste', 1.5, 13, 0);
 
 -- --------------------------------------------------------
 
@@ -216,7 +221,7 @@ CREATE TABLE `tipo_cambio` (
 --
 
 INSERT INTO `tipo_cambio` (`id`, `fecha`, `tasa_de_cambio`) VALUES
-(4, '2024-11-26 13:48:50', 78.5);
+(4, '2024-11-26 13:48:50', 94.06);
 
 -- --------------------------------------------------------
 
@@ -235,7 +240,8 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`id`, `correo`, `clave`) VALUES
-(1, 'camaco81@gmail.com', 'Electro123');
+(1, 'camaco81@gmail.com', 'Electro123'),
+(3, 'master@gmail.com', 'Anime123456');
 
 -- --------------------------------------------------------
 
@@ -255,7 +261,14 @@ CREATE TABLE `ventas` (
 --
 
 INSERT INTO `ventas` (`id`, `fecha_venta`, `total_dolares`, `total_bolivares`) VALUES
-(1, '2025-04-21', 12.6, 989.1);
+(1, '2025-04-21', 12.6, 989.1),
+(2, '2025-05-17', 11.7, 1100.5),
+(3, '2025-05-17', 6.1, 573.77),
+(4, '2025-05-17', 28.2, 2652.49),
+(5, '2025-05-19', 10.2, 959.41),
+(7, '2025-05-19', 3, 282.18),
+(8, '2025-05-19', 3, 282.18),
+(11, '2025-05-19', 42, 3950.52);
 
 --
 -- Indexes for dumped tables
@@ -299,13 +312,13 @@ ALTER TABLE `ventas`
 -- AUTO_INCREMENT for table `detalle_venta`
 --
 ALTER TABLE `detalle_venta`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `productos`
 --
 ALTER TABLE `productos`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `tipo_cambio`
@@ -317,13 +330,13 @@ ALTER TABLE `tipo_cambio`
 -- AUTO_INCREMENT for table `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `ventas`
 --
 ALTER TABLE `ventas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 --
 -- Database: `bd_autos`
 --
@@ -718,7 +731,7 @@ CREATE TABLE `pma__recent` (
 --
 
 INSERT INTO `pma__recent` (`username`, `tables`) VALUES
-('root', '[{\"db\":\"base_ventas\",\"table\":\"detalle_venta\"},{\"db\":\"base_ventas\",\"table\":\"ventas\"},{\"db\":\"base_ventas\",\"table\":\"usuarios\"},{\"db\":\"base_ventas\",\"table\":\"usarios\"},{\"db\":\"base_ventas\",\"table\":\"productos\"},{\"db\":\"base_ventas\",\"table\":\"tipo_cambio\"},{\"db\":\"base_gym\",\"table\":\"usuarios\"},{\"db\":\"base_gym\",\"table\":\"clientes\"},{\"db\":\"base_gym\",\"table\":\"pagos\"},{\"db\":\"bd_de_ejemplo\",\"table\":\"usuarios\"}]');
+('root', '[{\"db\":\"base_ventas\",\"table\":\"productos\"},{\"db\":\"base_ventas\",\"table\":\"detalle_venta\"},{\"db\":\"base_ventas\",\"table\":\"ventas\"},{\"db\":\"base_ventas\",\"table\":\"tipo_cambio\"},{\"db\":\"base_ventas\",\"table\":\"usuarios\"},{\"db\":\"base_ventas\",\"table\":\"usarios\"},{\"db\":\"base_gym\",\"table\":\"usuarios\"},{\"db\":\"base_gym\",\"table\":\"clientes\"},{\"db\":\"base_gym\",\"table\":\"pagos\"},{\"db\":\"bd_de_ejemplo\",\"table\":\"usuarios\"}]');
 
 -- --------------------------------------------------------
 
@@ -834,7 +847,7 @@ CREATE TABLE `pma__userconfig` (
 
 INSERT INTO `pma__userconfig` (`username`, `timevalue`, `config_data`) VALUES
 ('', '2024-12-08 15:32:38', '{\"lang\":\"es\"}'),
-('root', '2025-04-21 13:55:47', '{\"Console\\/Mode\":\"show\",\"NavigationWidth\":181}');
+('root', '2025-05-19 15:10:21', '{\"Console\\/Mode\":\"show\",\"NavigationWidth\":181}');
 
 -- --------------------------------------------------------
 

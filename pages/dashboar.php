@@ -12,7 +12,7 @@ if (isset($_SESSION['usuario'])!="usuario") {
 		<ul class="mt-4 text-white" style="list-style: none;">
 			<li  class="mb-2"><i class="bi bi-house-fill"></i> <a class="text-white text-decoration-none" href="dashboar.php"> Inicio</a> </li>
 			<li  class="mb-2"><i class="bi bi-currency-dollar"></i> <a class="text-white text-decoration-none" href="tasa.php">Tasa dolar</a></li>
-			<li  class="mb-2"><i class="bi bi-apple"></i> <a class="text-white text-decoration-none" href="productos.php"> Productos</a></li>
+			<li  class="mb-2"><i class="bi bi-shop"></i> <a class="text-white text-decoration-none" href="productos.php"> Productos</a></li>
 			<li  class="mb-2"><i class="bi bi-cash"></i> <a class="text-white text-decoration-none" href="ventas.php"> Venta</a></li>
 			<a href="../auth/cerrarSesion.php" class="col-2 text-decoration-none text-white"><i class="bi bi-box-arrow-left h4"></i> Salir  </a>
 		</ul>
