@@ -44,12 +44,15 @@ if (isset($_POST['actualizar_producto'])) {
 			<div class="card card-body ">
 				<form action="editar_producto.php?id=<?php echo $_GET['id']; ?>" method="POST">
 					<div class="form-group">
+					<label for="" class="fw-semibold">Nombre del producto</label>
 					<input type="text" name="nombre" value="<?php echo $nombre; ?>" class="form-control" placeholder="Actualize producto">
 					</div>
 					<div class="form-group">
+					<label for="" class="fw-semibold">Cantidad</label>
 					<input type="text" name="cantidad" class="form-control" placeholder="Actualizar cantidad" value="<?php echo $cantidad; ?>">
 					</div>
 					<div class="form-group">
+					<label for="" class="fw-semibold">Precio</label>
 					<input type="text" name="precio_en_dolares" class="form-control" placeholder="Actualize precio en dolares" value="<?php echo $precio_en_dolares; ?>">
 					</div>
 						
