@@ -17,18 +17,12 @@ if (isset($_POST['registar_precio'])) {
 
 
 <div class="d-flex flex-column  justify-content-center align-items-center">
-	<img src="../img/descarga.png" alt="" class="rounded-2 mt-2 mb-2">
+	<img src="../img/El-dolar-BCV.jpg" alt="" class="rounded-2 mt-2 mb-2 col-7">
 	
 	<h1>Tasa de cambio </h1>
 	<div class=" d-flex justify-content-center  flex-column ">
  
-<!-- <form action="tasa.php" method="POST" class="d-flex flex-column">
-	<label for="">Registrar tasa </label>
-    <input type="text"  name="tasa"  class="mb-2">
-            
-	
-<button class="btn btn-primary mb-2" type="submit" name="registar_precio">Guardar</button>
-</form> -->
+
 
 
  <?php 
@@ -43,10 +37,9 @@ if (isset($_POST['registar_precio'])) {
             	
                
             <?php } ?>
-
-         <div class=" d-flex justify-content-center  ">
-  <a href="dashboar.php" class="text-decoration-none"><i class="bi bi-arrow-left"></i> Regresar a Inicio</a>
-</div>
+ <div class="mt-4 text-center">
+        <a href="dashboar.php" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Regresar a Inicio</a>
+    </div>
 
 
 

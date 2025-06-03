@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 02, 2025 at 03:13 PM
+-- Generation Time: Jun 03, 2025 at 07:52 PM
 -- Server version: 10.1.38-MariaDB
 -- PHP Version: 7.3.2
 
@@ -25,6 +25,26 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `clientes`
+--
+
+CREATE TABLE `clientes` (
+  `id` int(11) NOT NULL,
+  `cedula` varchar(20) COLLATE utf32_unicode_ci NOT NULL,
+  `nombre` varchar(100) COLLATE utf32_unicode_ci NOT NULL,
+  `telefono` varchar(20) COLLATE utf32_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf32 COLLATE=utf32_unicode_ci;
+
+--
+-- Dumping data for table `clientes`
+--
+
+INSERT INTO `clientes` (`id`, `cedula`, `nombre`, `telefono`) VALUES
+(1, '31438776', 'Marco Camacho', '04165227711');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `detalle_venta`
 --
 
@@ -33,40 +53,18 @@ CREATE TABLE `detalle_venta` (
   `nombre_producto` varchar(30) COLLATE utf32_unicode_ci NOT NULL,
   `cantidad` int(11) NOT NULL,
   `subtotal_dolares` float NOT NULL,
-  `subtotal_bolivares` float NOT NULL
+  `subtotal_bolivares` float NOT NULL,
+  `venta_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf32 COLLATE=utf32_unicode_ci;
 
 --
 -- Dumping data for table `detalle_venta`
 --
 
-INSERT INTO `detalle_venta` (`id`, `nombre_producto`, `cantidad`, `subtotal_dolares`, `subtotal_bolivares`) VALUES
-(1, 'Arroz Mari', 2, 3, 235.5),
-(2, 'Caraotas la coste', 2, 6, 471),
-(3, 'Arroz Mari', 4, 6, 471),
-(4, 'Harina deli', 4, 9.6, 753.6),
-(5, 'Harina deli', 3, 7.2, 677.232),
-(7, 'Arroz Mari', 1, 1.5, 141.09),
-(8, 'Arroz Mari', 2, 3, 282.18),
-(9, 'Champu Liso 250ml', 4, 42, 3950.52),
-(10, 'Arroz Mari', 4, 6, 564.36),
-(11, 'Caraotas la coste', 3, 4.5, 437.89),
-(12, 'Champu Liso 250ml', 1, 10.5, 1021.75),
-(13, 'Arroz Mari', 2, 3, 291.93),
-(14, 'Harina deli', 5, 15, 1459.65),
-(15, 'Champu Liso 250ml', 1, 10.5, 1021.75),
-(16, 'Harina deli', 2, 6, 583.86),
-(17, 'Arroz Mari', 2, 3, 291.93),
-(18, 'Harina deli', 2, 6, 583.86),
-(19, 'Harina deli', 2, 6, 583.86),
-(20, 'Arroz Mari', 4, 6, 583.86),
-(21, 'Arroz Mari', 1, 1.5, 145.97),
-(22, 'Cafe', 1, 2.5, 243.28),
-(23, 'Harina deli', 2, 6, 583.86),
-(24, 'Arroz Mari', 1, 1.5, 145.97),
-(25, 'Arroz Mari', 2, 3, 291.93),
-(26, 'Arroz Mari', 2, 3, 291.93),
-(27, 'Harina deli', 1, 3, 291.93);
+INSERT INTO `detalle_venta` (`id`, `nombre_producto`, `cantidad`, `subtotal_dolares`, `subtotal_bolivares`, `venta_id`) VALUES
+(1, 'Harina deli', 2, 6, 583.86, 11),
+(2, 'Caraotas la coste', 1, 1.5, 145.97, 12),
+(3, 'Arroz Mari', 1, 1.5, 145.97, 13);
 
 -- --------------------------------------------------------
 
@@ -87,10 +85,10 @@ CREATE TABLE `productos` (
 --
 
 INSERT INTO `productos` (`id`, `nombre`, `precio_en_dolares`, `cantidad`, `precio_en_bolivares`) VALUES
-(1, 'Harina deli', 3, 4, 0),
-(2, 'Arroz Mari', 1.5, 3, 0),
+(1, 'Harina deli', 3, -1, 0),
+(2, 'Arroz Mari', 1.5, -6, 0),
 (6, 'Champu Liso 250ml', 10.5, 1, 0),
-(9, 'Caraotas la coste', 1.5, 10, 0),
+(9, 'Caraotas la coste', 1.5, 8, 0),
 (10, 'Cafe', 2.5, 11, 0);
 
 -- --------------------------------------------------------
@@ -142,44 +140,40 @@ CREATE TABLE `ventas` (
   `id` int(11) NOT NULL,
   `fecha_venta` date NOT NULL,
   `total_dolares` float NOT NULL,
-  `total_bolivares` float NOT NULL
+  `total_bolivares` float NOT NULL,
+  `cliente_nombre` varchar(50) COLLATE utf32_unicode_ci NOT NULL,
+  `cliente_cedula` varchar(20) COLLATE utf32_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf32 COLLATE=utf32_unicode_ci;
 
 --
 -- Dumping data for table `ventas`
 --
 
-INSERT INTO `ventas` (`id`, `fecha_venta`, `total_dolares`, `total_bolivares`) VALUES
-(1, '2025-04-21', 12.6, 989.1),
-(2, '2025-05-17', 11.7, 1100.5),
-(3, '2025-05-17', 6.1, 573.77),
-(4, '2025-05-17', 28.2, 2652.49),
-(5, '2025-05-19', 10.2, 959.41),
-(7, '2025-05-19', 3, 282.18),
-(8, '2025-05-19', 3, 282.18),
-(11, '2025-05-19', 42, 3950.52),
-(13, '2025-05-29', 6, 564.36),
-(14, '2025-05-31', 33, 3211.22),
-(15, '2025-05-31', 0, 0),
-(16, '2025-05-31', 0, 0),
-(18, '2025-06-02', 10.5, 1021.75),
-(21, '2025-06-02', 6, 583.86),
-(22, '2025-06-02', 9, 875.79),
-(23, '2025-06-02', 12, 1167.72),
-(24, '2025-06-02', 4, 389.25),
-(25, '2025-06-02', 7.5, 729.83),
-(26, '2025-06-02', 3, 291.93),
-(27, '2025-06-02', 6, 583.86);
+INSERT INTO `ventas` (`id`, `fecha_venta`, `total_dolares`, `total_bolivares`, `cliente_nombre`, `cliente_cedula`) VALUES
+(9, '2025-06-03', 3, 291.93, 'Consumidor Final', 'V-00000000'),
+(10, '2025-06-03', 3, 291.93, 'Consumidor Final', 'V-00000000'),
+(11, '2025-06-03', 6, 583.86, 'Consumidor Final', 'V-00000000'),
+(12, '2025-06-03', 1.5, 145.97, 'Sol Contreras', 'V-30099742'),
+(13, '2025-06-03', 1.5, 145.97, 'Marco Camacho', '31438776');
 
 --
 -- Indexes for dumped tables
 --
 
 --
+-- Indexes for table `clientes`
+--
+ALTER TABLE `clientes`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `cedula` (`cedula`);
+
+--
 -- Indexes for table `detalle_venta`
 --
 ALTER TABLE `detalle_venta`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `venta_id` (`venta_id`),
+  ADD UNIQUE KEY `venta_id_2` (`venta_id`);
 
 --
 -- Indexes for table `productos`
@@ -210,10 +204,16 @@ ALTER TABLE `ventas`
 --
 
 --
+-- AUTO_INCREMENT for table `clientes`
+--
+ALTER TABLE `clientes`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT for table `detalle_venta`
 --
 ALTER TABLE `detalle_venta`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `productos`
@@ -237,7 +237,17 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT for table `ventas`
 --
 ALTER TABLE `ventas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `detalle_venta`
+--
+ALTER TABLE `detalle_venta`
+  ADD CONSTRAINT `fk_detalleventa_ventas` FOREIGN KEY (`venta_id`) REFERENCES `ventas` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

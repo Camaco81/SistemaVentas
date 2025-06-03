@@ -96,9 +96,9 @@ if (isset($_POST['registrar_producto'])) {
         </tbody>
              
  </table>
-  <div class=" d-flex justify-content-center mb-3 ">
-  <a href="dashboar.php" class="text-decoration-none"><i class="bi bi-arrow-left"></i> Regresar a Inicio</a>
-</div>
+ <div class="mt-4 text-center">
+        <a href="dashboar.php" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Regresar a Inicio</a>
+    </div>
 
 </div>
 

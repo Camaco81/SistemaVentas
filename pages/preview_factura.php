@@ -1,13 +1,14 @@
 <?php
 // Incluye tu header si lo necesitas para estilos globales o librerías
 // (Asegúrate de que no tenga elementos que no quieras en la factura, como la barra de navegación)
-// include("../includes/header.php");
+include("../includes/header.php");
 
 // Recibe los datos enviados por POST desde ventas.php
 $productos_json = isset($_POST['productos']) ? $_POST['productos'] : '[]';
 $totalDolares = isset($_POST['totalDolares']) ? (float)$_POST['totalDolares'] : 0;
 $totalBolivares = isset($_POST['totalBolivares']) ? (float)$_POST['totalBolivares'] : 0;
-
+$clienteNombre = isset($_POST['clienteNombre']) ? $_POST['clienteNombre'] : 'Consumidor Final';
+$clienteCedula = isset($_POST['clienteCedula']) ? $_POST['clienteCedula'] : 'V-00000000';
 $productos = json_decode($productos_json, true); // Convierte el JSON a un array de PHP
 
 // Datos de la factura (puedes traerlos de tu base de datos o generarlos aquí)
@@ -161,10 +162,9 @@ $invoiceNumber = "FAC-" . date('YmdHis'); // Esto sería mejor generarlo al regi
         </div>
 
         <div class="invoice-info">
-            <p>Cliente: <strong>Consumidor Final</strong></p>
-            <p>C.I./RIF: <strong>V-00000000</strong></p>
-        </div>
-
+            <p>Cliente: <strong><?php echo htmlspecialchars($clienteNombre); ?></strong></p>
+            <p>C.I./RIF: <strong><?php echo htmlspecialchars($clienteCedula); ?></strong></p>
+            </div>
         <table class="invoice-table">
             <thead>
                 <tr>
