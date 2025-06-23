@@ -2,7 +2,7 @@
 include('../conn/conexio.php');
 session_start();
 if (isset($_SESSION['usuario'])!="usuario") {
-	header("Location: ../auth/login.php");
+	header("Location: login.php");
 }
 ?>
 <?php  include("../includes/header.php")  ?>

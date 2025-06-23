@@ -1,159 +1,43 @@
 <?php
-// Incluye tu header si lo necesitas para estilos globales o librerías
-// (Asegúrate de que no tenga elementos que no quieras en la factura, como la barra de navegación)
-include("../includes/header.php");
+// preview_factura.php
 
-// Recibe los datos enviados por POST desde ventas.php
-$productos_json = isset($_POST['productos']) ? $_POST['productos'] : '[]';
-$totalDolares = isset($_POST['totalDolares']) ? (float)$_POST['totalDolares'] : 0;
-$totalBolivares = isset($_POST['totalBolivares']) ? (float)$_POST['totalBolivares'] : 0;
+// Recuperar los datos enviados por POST
+$productosJson = isset($_POST['productos']) ? $_POST['productos'] : '[]';
+$totalDolares = isset($_POST['totalDolares']) ? floatval($_POST['totalDolares']) : 0;
+$totalBolivares = isset($_POST['totalBolivares']) ? floatval($_POST['totalBolivares']) : 0;
 $clienteNombre = isset($_POST['clienteNombre']) ? $_POST['clienteNombre'] : 'Consumidor Final';
 $clienteCedula = isset($_POST['clienteCedula']) ? $_POST['clienteCedula'] : 'V-00000000';
-$productos = json_decode($productos_json, true); // Convierte el JSON a un array de PHP
 
-// Datos de la factura (puedes traerlos de tu base de datos o generarlos aquí)
-$invoiceDate = date('d/m/Y');
-// Simplemente para demostración, puedes obtener el número de factura de la BD
-$invoiceNumber = "FAC-" . date('YmdHis'); // Esto sería mejor generarlo al registrar la venta
+// Decodificar el JSON de productos
+// ¡Importante! Reintroducimos urldecode() aquí para asegurar que el JSON se decodifique correctamente
+// si fue encodeURIComponent() en el lado del cliente.
+$productos = json_decode(urldecode($productosJson), true); 
 
-// --- Aquí iría el CSS específico de tu factura ---
-// Puedes ponerlo directamente aquí o vincular un archivo CSS externo
+// Verificar si la decodificación fue exitosa
+if (json_last_error() !== JSON_ERROR_NONE) {
+    $productos = []; // Si hay un error, inicializar productos como un array vacío
+    error_log("Error al decodificar JSON de productos en preview_factura.php: " . json_last_error_msg());
+    // Opcional: Para depuración, puedes imprimir el error JSON
+    // echo "DEBUG JSON ERROR: " . json_last_error_msg();
+}
+
+// Generar un número de factura aleatorio (puedes ajustarlo a tu lógica real)
+// Idealmente, esto vendría de la base de datos después de registrar la venta
+$numeroFactura = 'FAC-' . date('YmdHis') . rand(1000, 9999);
+
+// Incluye tu header y el resto de tu HTML para la factura
+include("../includes/header.php"); // Asegúrate de que este header exista y sea correcto
 ?>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vista Previa de Factura</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 
-    <style>
-        body {
-            background-color: #f4f4f4;
-            font-family: Arial, sans-serif;
-            padding: 20px;
-        }
-        .invoice-container {
-            max-width: 800px;
-            margin: 20px auto;
-            background-color: #fff;
-            padding: 30px;
-            border: 1px solid #eee;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            font-size: 12px;
-            position: relative; /* Necesario para la posición absoluta de los botones de control */
-        }
-        .invoice-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 30px;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 15px;
-        }
-        .invoice-header h2 {
-            color: #007bff;
-            margin: 0;
-            font-size: 24px;
-        }
-        .invoice-header .company-info p {
-            margin: 0;
-            text-align: right;
-            font-size: 11px;
-        }
-        .invoice-info {
-            margin-bottom: 20px;
-        }
-        .invoice-info p {
-            margin: 2px 0;
-            font-size: 12px;
-        }
-        .invoice-info strong {
-            color: #555;
-        }
-        .invoice-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 30px;
-        }
-        .invoice-table th,
-        .invoice-table td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        .invoice-table th {
-            background-color: #f2f2f2;
-            font-weight: bold;
-            text-transform: uppercase;
-            font-size: 11px;
-        }
-        .invoice-table td.text-right {
-            text-align: right;
-        }
-        .invoice-totals {
-            width: 100%;
-            text-align: right;
-            font-size: 13px;
-        }
-        .invoice-totals p {
-            margin: 5px 0;
-        }
-        .invoice-totals .total-amount {
-            font-size: 18px;
-            font-weight: bold;
-            color: #28a745;
-        }
-        .invoice-footer {
-            text-align: center;
-            margin-top: 50px;
-            padding-top: 15px;
-            border-top: 1px solid #eee;
-            color: #777;
-            font-size: 10px;
-        }
-
-        /* Estilos para los botones de control fuera del área de impresión */
-        .invoice-controls {
-            text-align: center;
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #f0f0f0;
-            border-radius: 8px;
-        }
-        .invoice-controls button, .invoice-controls a {
-            margin: 5px;
-        }
-
-        /* Ocultar elementos de control al imprimir/generar PDF */
-        @media print {
-            .invoice-controls {
-                display: none;
-            }
-            body {
-                background-color: #fff; /* Fondo blanco para impresión */
-                padding: 0;
-            }
-            .invoice-container {
-                box-shadow: none; /* Sin sombra en impresión */
-                border: none; /* Sin borde en impresión */
-                margin: 0; /* Sin margen en impresión */
-                padding: 0; /* Asegurar que el contenido llene el papel */
-                width: 100%; /* Asegurar que el contenido ocupe todo el ancho */
-            }
-        }
-    </style>
-</head>
-<body>
-
-    <div class="invoice-container" id="invoice_content_to_print">
-        <div class="invoice-header">
+<div class="container mt-4 mb-4">
+    <div class="card p-4">
+        <div class="d-flex justify-content-between mb-4">
             <div>
-                <h2>Factura de Venta</h2>
-                <p>Fecha: <strong><?php echo $invoiceDate; ?></strong></p>
-                <p>Nº Factura: <strong><?php echo $invoiceNumber; ?></strong></p>
+                <h3>Factura de Venta</h3>
+                <p>Fecha: <?php echo date('d/m/Y'); ?></p>
+                <p>N° Factura: <?php echo htmlspecialchars($numeroFactura); ?></p>
             </div>
-            <div class="company-info">
+            <div class="text-end">
                 <h4>Tu Empresa S.A.</h4>
                 <p>RIF: J-12345678-9</p>
                 <p>Dirección: Calle Principal, Ciudad, Estado</p>
@@ -161,89 +45,96 @@ $invoiceNumber = "FAC-" . date('YmdHis'); // Esto sería mejor generarlo al regi
             </div>
         </div>
 
-        <div class="invoice-info">
-            <p>Cliente: <strong><?php echo htmlspecialchars($clienteNombre); ?></strong></p>
-            <p>C.I./RIF: <strong><?php echo htmlspecialchars($clienteCedula); ?></strong></p>
-            </div>
-        <table class="invoice-table">
+        <div class="mb-4">
+            <p><strong>Cliente:</strong> <?php echo htmlspecialchars($clienteNombre); ?></p>
+            <p><strong>C.I./RIF:</strong> <?php echo htmlspecialchars($clienteCedula); ?></p>
+        </div>
+
+        <table class="table table-bordered">
             <thead>
                 <tr>
-                    <th>Producto</th>
-                    <th class="text-right">Cantidad</th>
-                    <th class="text-right">Precio U. ($)</th>
-                    <th class="text-right">Subtotal ($)</th>
-                    <th class="text-right">Subtotal (Bs)</th>
+                    <th>PRODUCTO</th>
+                    <th>CANTIDAD</th>
+                    <th>PRECIO U. ($)</th>
+                    <th>SUBTOTAL ($)</th>
+                    <th>SUBTOTAL (BS)</th>
                 </tr>
             </thead>
             <tbody>
                 <?php if (!empty($productos)): ?>
-                    <?php foreach ($productos as $p): ?>
+                    <?php foreach ($productos as $producto): ?>
                         <tr>
-                            <td><?php echo htmlspecialchars($p['nombre']); ?></td>
-                            <td class="text-right"><?php echo htmlspecialchars($p['cantidad']); ?></td>
-                            <td class="text-right"><?php echo number_format($p['subtotalDolares'] / $p['cantidad'], 2); ?></td>
-                            <td class="text-right"><?php echo number_format($p['subtotalDolares'], 2); ?></td>
-                            <td class="text-right"><?php echo number_format($p['subtotalBolivares'], 2); ?></td>
-                        </tr>
+                            <td><?php echo htmlspecialchars($producto['nombre']); ?></td>
+                            <td><?php echo htmlspecialchars($producto['cantidad']); ?></td>
+                            <td>$<?php echo number_format($producto['precioUnitarioDolar'], 2); ?></td>
+                            <td>$<?php echo number_format($producto['subtotalDolares'], 2); ?></td>
+                            <td><?php echo number_format($producto['subtotalBolivares'], 2); ?> Bs</td> </tr>
                     <?php endforeach; ?>
                 <?php else: ?>
-                    <tr><td colspan="5">No hay productos en esta factura.</td></tr>
+                    <tr>
+                        <td colspan="5" class="text-center">No hay productos en esta factura.</td>
+                    </tr>
                 <?php endif; ?>
             </tbody>
         </table>
 
-        <div class="invoice-totals">
-            <p>Total en Dólares: <span class="total-amount">$<?php echo number_format($totalDolares, 2); ?></span></p>
-            <p>Total en Bolívares: <span class="total-amount"><?php echo number_format($totalBolivares, 2); ?> Bs</span></p>
+        <div class="text-end mt-4">
+            <h5>Total en Dólares: <span style="color: green;">$<?php echo number_format($totalDolares, 2); ?></span></h5>
+            <h5>Total en Bolívares: <span style="color: green;"><?php echo number_format($totalBolivares, 2); ?> Bs</span></h5>
         </div>
 
-        <div class="invoice-footer">
-            <p>¡Gracias por tu compra!</p>
-            <p>Software de Ventas - Creado por [Tu Nombre/Empresa]</p>
-        </div>
+        <p class="text-center mt-5">¡Gracias por tu compra!</p>
+        <p class="text-center text-muted"><small>Software de Ventas - Creado por [Tu Nombre/Empresa]</small></p>
     </div>
 
-    <div class="invoice-controls">
-        <button class="btn btn-primary" id="downloadPdfBtn">Descargar Factura PDF</button>
-        <button class="btn btn-info" onclick="window.print()">Imprimir Factura</button>
-        <a href="ventas.php" class="btn btn-secondary">Volver a Ventas</a>
+    <div class="d-flex justify-content-around mt-4">
+        <button class="btn btn-info" id="downloadPdfBtn">Descargar Factura PDF</button>
+        
+        <button class="btn btn-primary" onclick="window.print()">Imprimir Factura</button>
+        <button class="btn btn-secondary" onclick="window.close()">Cerrar Ventana</button>
     </div>
+</div>
 
-    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-    <script>
-        $(document).ready(function() {
-            $('#downloadPdfBtn').on('click', function() {
-                const invoiceContent = document.getElementById('invoice_content_to_print');
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const downloadPdfBtn = document.getElementById('downloadPdfBtn');
+        if (downloadPdfBtn) {
+            downloadPdfBtn.addEventListener('click', function() {
+                const { jsPDF } = window.jspdf;
+                const element = document.querySelector('.card'); // Selecciona el div de la factura
 
-                html2canvas(invoiceContent, { scale: 2 }).then(canvas => {
+                html2canvas(element, { scale: 2 }).then(canvas => { // Aumentar escala para mejor resolución
                     const imgData = canvas.toDataURL('image/png');
-                    const pdf = new jspdf.jsPDF('p', 'mm', 'a4'); // 'p' portrait, 'mm' units, 'a4' size
-                    const imgProps = pdf.getImageProperties(imgData);
-                    const pdfWidth = pdf.internal.pageSize.getWidth();
-                    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+                    const pdf = new jsPDF('p', 'mm', 'a4'); 
+                    const imgWidth = 210; // Ancho A4 en mm
+                    const pageHeight = 297; // Alto A4 en mm
+                    const imgHeight = canvas.height * imgWidth / canvas.width;
+                    let heightLeft = imgHeight;
+                    let position = 0;
 
-                    const margin = 10; // 10mm margin on all sides
-                    const actualPdfWidth = pdfWidth - (margin * 2);
-                    const actualPdfHeight = (imgProps.height * actualPdfWidth) / imgProps.width;
+                    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
 
-                    pdf.addImage(imgData, 'PNG', margin, margin, actualPdfWidth, actualPdfHeight);
-                    pdf.save('factura_venta.pdf');
+                    while (heightLeft >= 0) {
+                        position = heightLeft - imgHeight;
+                        pdf.addPage();
+                        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                        heightLeft -= pageHeight;
+                    }
+                    pdf.save('factura_<?php echo htmlspecialchars($numeroFactura); ?>.pdf');
                 }).catch(error => {
-                    console.error("Error al generar el PDF:", error);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error de PDF',
-                        text: 'No se pudo generar el PDF. Revisa la consola para más detalles.'
-                    });
+                    console.error("Error al generar PDF:", error);
+                    alert("Hubo un error al generar el PDF de la factura.");
                 });
             });
-        });
-    </script>
+        }
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
 </body>
 </html>

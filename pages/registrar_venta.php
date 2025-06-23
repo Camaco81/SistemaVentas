@@ -1,109 +1,124 @@
 <?php
-include("../conn/conexio.php");
+// registrar_venta.php
 
-// Activar la visualización de errores solo para desarrollo (desactivar en producción)
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-// Recuperar los datos del POST
-$productos_json = isset($_POST['productos']) ? $_POST['productos'] : '[]';
-$totalDolares = isset($_POST['totalDolares']) ? (float)$_POST['totalDolares'] : 0;
-$totalBolivares = isset($_POST['totalBolivares']) ? (float)$_POST['totalBolivares'] : 0;
-$clienteNombre = isset($_POST['clienteNombre']) ? $_POST['clienteNombre'] : 'Consumidor Final';
-$clienteCedula = isset($_POST['clienteCedula']) ? $_POST['clienteCedula'] : 'V-00000000';
+include("../conn/conexio.php"); // Asegúrate de que este archivo establece la conexión en $conex o $mysqli
 
-$productos = json_decode($productos_json, true);
+header('Content-Type: application/json');
 
-// Iniciar una transacción para asegurar la integridad de los datos
-mysqli_autocommit($conex, FALSE); // Desactivar autocommit
-$success = true;
+$response = ['status' => 'error', 'message' => 'Error desconocido.'];
 
-// Inicializar $stmt_detalle y $stmt_stock a null fuera del try-catch
-// Esto asegura que estén definidos incluso si la preparación falla.
-$stmt_detalle = null;
-$stmt_stock = null;
-$stmt_venta = null; // También inicializa stmt_venta para un manejo más seguro en finally
-
-try {
-    // 1. Insertar la venta principal
-    $stmt_venta = mysqli_prepare($conex, "INSERT INTO ventas (fecha_venta, total_dolares, total_bolivares, cliente_nombre, cliente_cedula) VALUES (NOW(), ?, ?, ?, ?)");
-    if (!$stmt_venta) {
-        throw new Exception("Error al preparar la consulta de venta: " . mysqli_error($conex));
-    }
-    mysqli_stmt_bind_param($stmt_venta, "ddss", $totalDolares, $totalBolivares, $clienteNombre, $clienteCedula);
-
-    $exec_success_venta = mysqli_stmt_execute($stmt_venta);
-    if (!$exec_success_venta) {
-        throw new Exception("Error al ejecutar la inserción de venta: " . mysqli_stmt_error($stmt_venta));
-    }
-
-    $venta_id = mysqli_insert_id($conex); // <-- Obtener el ID de la venta recién insertada
-    // mysqli_stmt_close($stmt_venta); // <-- ELIMINAR ESTA LÍNEA DE AQUÍ
-
-    if ($venta_id === 0) {
-        throw new Exception("Error al obtener el ID de la última venta. Confirma que la columna 'id' en la tabla 'ventas' es AUTO_INCREMENT y que la inserción de la venta no falló silenciosamente.");
-    }
-
-    // 2. Preparar las consultas de detalle y stock ANTES del bucle
-    $stmt_detalle = mysqli_prepare($conex, "INSERT INTO detalle_venta (venta_id, nombre_producto, cantidad, subtotal_dolares, subtotal_bolivares) VALUES (?, ?, ?, ?, ?)");
-    if (!$stmt_detalle) {
-        throw new Exception("Error al preparar la consulta de detalle de venta: " . mysqli_error($conex));
-    }
-
-    $stmt_stock = mysqli_prepare($conex, "UPDATE productos SET cantidad = cantidad - ? WHERE nombre = ?"); // Asumiendo que tu columna de stock es 'cantidad'
-    if (!$stmt_stock) {
-        throw new Exception("Error al preparar la consulta de stock: " . mysqli_error($conex));
-    }
-
-    foreach ($productos as $producto) {
-        $nombre_producto = $producto['nombre'];
-        $cantidad = $producto['cantidad'];
-        $subtotal_dolares = $producto['subtotalDolares'];
-        $subtotal_bolivares = $producto['subtotalBolivares'];
-
-        // Insertar detalles de la venta
-        mysqli_stmt_bind_param($stmt_detalle, "isdds", $venta_id, $nombre_producto, $cantidad, $subtotal_dolares, $subtotal_bolivares);
-        $exec_success_detalle = mysqli_stmt_execute($stmt_detalle);
-        if (!$exec_success_detalle) {
-             throw new Exception("Error al ejecutar la inserción de detalle para producto " . htmlspecialchars($nombre_producto) . ": " . mysqli_stmt_error($stmt_detalle));
-        }
-
-        // Actualizar el stock
-        mysqli_stmt_bind_param($stmt_stock, "is", $cantidad, $nombre_producto);
-        $exec_success_stock = mysqli_stmt_execute($stmt_stock);
-        if (!$exec_success_stock) {
-             throw new Exception("Error al actualizar stock para producto " . htmlspecialchars($nombre_producto) . ": " . mysqli_stmt_error($stmt_stock));
-        }
-    }
-
-    // ELIMINAR ESTAS LÍNEAS DE AQUÍ (ahora se cierran en finally)
-    // mysqli_stmt_close($stmt_detalle);
-    // mysqli_stmt_close($stmt_stock);
-
-    // Si todo salió bien, confirmar la transacción
-    mysqli_commit($conex);
-    echo "Venta registrada con éxito!";
-
-} catch (Exception $e) {
-    // Si algo falló, revertir la transacción
-    mysqli_rollback($conex);
-    error_log("Error al registrar venta: " . $e->getMessage());
-    http_response_code(500);
-    echo "Error al registrar la venta: " . $e->getMessage();
-    $success = false;
-} finally {
-    // Asegurarse de que las sentencias se cierren UNA SOLA VEZ y solo si son objetos válidos
-    if ($stmt_venta && is_object($stmt_venta)) { // Añadida la verificación para stmt_venta
-        mysqli_stmt_close($stmt_venta);
-    }
-    if ($stmt_detalle && is_object($stmt_detalle)) {
-        mysqli_stmt_close($stmt_detalle);
-    }
-    if ($stmt_stock && is_object($stmt_stock)) {
-        mysqli_stmt_close($stmt_stock);
-    }
-    mysqli_autocommit($conex, TRUE); // Volver a activar autocommit
-    mysqli_close($conex);
+if (!isset($conex) || !$conex) {
+    $response['message'] = "Error de conexión a la base de datos.";
+    echo json_encode($response);
+    exit();
 }
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $productosJson = isset($_POST['productos']) ? $_POST['productos'] : '[]';
+    $totalDolares = isset($_POST['totalDolares']) ? floatval($_POST['totalDolares']) : 0;
+    $totalBolivares = isset($_POST['totalBolivares']) ? floatval($_POST['totalBolivares']) : 0;
+    $clienteNombre = isset($_POST['clienteNombre']) ? $_POST['clienteNombre'] : 'Consumidor Final';
+    $clienteCedula = isset($_POST['clienteCedula']) ? $_POST['clienteCedula'] : 'V-00000000';
+
+    $productos = json_decode($productosJson, true);
+
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        $response['message'] = "Datos de productos inválidos: " . json_last_error_msg();
+        echo json_encode($response);
+        exit();
+    }
+
+    if (empty($productos)) {
+        $response['message'] = "No hay productos para registrar.";
+        echo json_encode($response);
+        exit();
+    }
+
+    $conex->autocommit(false);
+
+    try {
+        // *** LÍNEA 56 - CORRECCIÓN CRÍTICA EN EL SQL ***
+        // Asegúrate de que el número de '?' coincida con el número de variables que pasarás.
+        // Si 'fecha_venta' se llenará con NOW(), no necesita un '?'.
+        $stmtVenta = $conex->prepare("INSERT INTO ventas (cliente_nombre, cliente_cedula, total_dolares, total_bolivares, fecha_venta) VALUES (?, ?, ?, ?, NOW())");
+        // SI LA CONSULTA ANTERIOR SIGUE EN TU CÓDIGO CON 5 '?' Y NOW(), ES LA FUENTE DEL PROBLEMA.
+        // CÁMBIALA A:
+        $stmtVenta = $conex->prepare("INSERT INTO ventas (cliente_nombre, cliente_cedula, total_dolares, total_bolivares, fecha_venta) VALUES (?, ?, ?, ?, NOW())");
+
+
+        if (!$stmtVenta) {
+            throw new Exception("Error al preparar la consulta de venta: " . $conex->error);
+        }
+
+        // *** LÍNEA 61 - CORRECCIÓN CRÍTICA EN bind_param ***
+        // Ahora, el string de tipos debe tener 4 caracteres ("ssdd") para las 4 variables.
+     $stmtVenta->bind_param("ssdd", $clienteNombre, $clienteCedula, $totalDolares, $totalBolivares);
+        $stmtVenta->execute();
+        $ventaId = $conex->insert_id;
+        $stmtVenta->close();
+
+        if ($ventaId === 0) {
+            throw new Exception("No se pudo obtener el ID de la venta principal.");
+        }
+
+        foreach ($productos as $producto) {
+            $id_producto = $producto['id'];
+            $cantidad = $producto['cantidad'];
+            $nombre_producto = $producto['nombre'];
+            $subtotalDolares = $producto['subtotalDolares'];
+            $subtotalBolivares = $producto['subtotalBolivares'];
+
+            $stmtStock = $conex->prepare("SELECT cantidad FROM productos WHERE id = ? FOR UPDATE");
+            if (!$stmtStock) {
+                throw new Exception("Error al preparar la consulta de stock: " . $conex->error);
+            }
+            $stmtStock->bind_param("i", $id_producto);
+            $stmtStock->execute();
+            $stmtStock->bind_result($currentStock);
+            $stmtStock->fetch();
+            $stmtStock->close();
+
+            if ($currentStock === null || $currentStock < $cantidad) {
+                throw new Exception("Stock insuficiente para el producto '{$nombre_producto}'. Disponible: {$currentStock}, Solicitado: {$cantidad}.");
+            }
+
+            $stmtUpdateStock = $conex->prepare("UPDATE productos SET cantidad = cantidad - ? WHERE id = ?");
+            if (!$stmtUpdateStock) {
+                throw new Exception("Error al preparar la actualización de stock: " . $conex->error);
+            }
+            $stmtUpdateStock->bind_param("ii", $cantidad, $id_producto);
+            $stmtUpdateStock->execute();
+            $stmtUpdateStock->close();
+
+            $stmtDetalle = $conex->prepare("INSERT INTO detalle_venta (producto_id, nombre_producto, cantidad, subtotal_dolares, subtotal_bolivares, venta_id) VALUES (?, ?, ?, ?, ?, ?)");
+            if (!$stmtDetalle) {
+                throw new Exception("Error al preparar la consulta de detalle: " . $conex->error);
+            }
+            $stmtDetalle->bind_param("isdddi", $id_producto, $nombre_producto, $cantidad, $subtotalDolares, $subtotalBolivares, $ventaId);
+            $stmtDetalle->execute();
+            $stmtDetalle->close();
+        }
+
+        $conex->commit();
+        $response['status'] = 'success';
+        $response['message'] = "Venta registrada con éxito";
+
+    } catch (Exception $e) {
+        $conex->rollback();
+        $response['status'] = 'error';
+        $response['message'] = "Error en la operación: " . $e->getMessage();
+        error_log("Error al registrar venta: " . $e->getMessage());
+    } finally {
+        $conex->autocommit(true);
+    }
+
+} else {
+    $response['message'] = "Método de solicitud no permitido.";
+}
+
+echo json_encode($response);
 ?>
