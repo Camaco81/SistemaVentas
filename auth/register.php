@@ -24,23 +24,26 @@ include("../includes/header.php");
 	}
 
 ?>
-<main style="height:100vh; " class="bg-secondary p-2">
+<main style="height:100vh; " class="brawn p-2">
 
-<div class="container  col-6 border border-secondary p-4 mt-4 rounded-2 bg-light">
-	<h1 class="text-center">Sistema de Ventas</h1>
-	<h3 class="text-center">Registrate y comienza a vender</h3>
-
-
+<div class="container  col-6 p-4 mt-4 rounded-2 bg-light">
+	
 	<form action="register.php" method="POST" class="d-flex flex-column mb-2">
-		<label for="" >Correo</label>
-		<input required type="email" name="correo" id="" class="mb-2 p-1 rounded-2 border border-1 border-secondary">
-		<label for=""  >Contraseña</label>
-		<input required type="password" name="clave"  class="mb-2 p-1 rounded-2 border border-1 border-secondary" id="pass">
-		<div class="text-muted mb-2"><input type="checkbox" name="" id="show"> Mostar contraseña</div>
-		<input type="submit" value="Registrarse" class="btn btn-dark mb-2" name="registrar_user" >
+		 <div class="d-flex justify-content-center align-items-center">
+                  <div class="col-6 d-flex  flex-column-reverse justify-content-center align-items-center">
+                    <h3 class="mt-2 text-green-700">Registro</h3>
+            <img src="../img/logo-v1.png" class="col-7 rounded-4">
+            </div> 
+            </div>
+		<label class="text-green-700 fw-semibold" >Correo</label>
+		<input required type="email" name="correo" id="" class="mb-2 p-1 rounded-2 border border-1 p-2">
+		<label class="text-green-700 fw-semibold"  >Contraseña</label>
+		<input required type="password" name="clave"  class="mb-2 p-1 rounded-2 border border-1 p-2" id="pass">
+		<div class=" mb-2"><input type="checkbox" name="" id="show"> Mostar contraseña</div>
+		<input type="submit" value="Registrarse" class="btn  mb-2 btn-login text-white" name="registrar_user" >
 		
 	</form>
-	<p>Ya tienes una cuenta? <a href="login.php" class="text-decoration-none text-secondary "> Inicia Sesión aquí</a></p>
+	<p>Ya tienes una cuenta? <a href="login.php" class="text-decoration-none text-green-500 "> Inicia Sesión aquí</a></p>
 </div>
 </main>
 <?php include("../includes/footer.php")?>

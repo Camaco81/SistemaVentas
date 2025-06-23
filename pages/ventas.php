@@ -2,14 +2,23 @@
 
 <?php
 include("../conn/conexio.php"); ?>
-<div class="text-center">
-    <h1>Ventas</h1>
-</div>
+<div class="col-12 d-flex flex-row-reverse">
+        <div class="col-5 d-flex flex-row-reverse mt-2"><img src="../img/logo-v1.png" class="col-3 rounded-4 mx-2"></div>
+        <div class="text-center col-8 d-flex flex-row-reverse mt-3">
+    <h1 class="text-green-700">Ventas</h1>
+    </div>
+         
+    </div>
+
 <main class="p-3">
-    <h3>Buscador de productos</h3>
-    <p class="text-muted">(Busque el producto, agregue la cantidad y seleccionelo )</p>
+
+
+    <h3 class="">Buscador de productos</h3>
+
+
+    <p class="text-green-500">(Busque el producto, agregue la cantidad y seleccionelo )</p>
     <div class="d-flex align-items-center">
-        <input type="text" id="busqueda" placeholder="Buscar producto" class="rounded-2 p-1 border border-2" autofocus>
+        <input type="text" id="busqueda" placeholder="Buscar producto" class="rounded-2 p-1 border border-2" >
         <div id="stockMessage" class="ms-2 text-danger fw-bold"></div> </div>
     <div id="resultados">
     </div>
@@ -17,8 +26,8 @@ include("../conn/conexio.php"); ?>
         <div class="mb-3">
             <label for="clienteCedula" class="form-label">Cédula/RIF del Cliente</label>
             <div class="input-group">
-                <input type="text" class="form-control" id="clienteCedula" name="clienteCedula" value="V-00000000">
-                <button class="btn btn-outline-secondary" type="button" id="buscarClienteBtn">Buscar</button>
+                <input type="text" class=" col-5 border border-1 rounded-2" id="clienteCedula" name="clienteCedula" value="V-00000000">
+                <button class="btn btn-login text-white" type="button" id="buscarClienteBtn">Buscar</button>
             </div>
         </div>
         <div class="mb-3">
@@ -26,17 +35,17 @@ include("../conn/conexio.php"); ?>
             <input type="text" class="form-control" id="clienteNombre" name="clienteNombre" value="Consumidor Final" readonly>
         </div>
 
-        <h3>Productos seleccionados</h3> <p class="text-muted">(Aca se listan los productos seleccionados)</p>
+        <h3>Productos seleccionados</h3> <p class="text-green-500">(Aca se listan los productos seleccionados)</p>
         <div id="productos_seleccionados"></div>
         <h3>Total de la venta</h3>
-        <p class="text-muted">(Precio total de todos los productos seleccionados tanto en dolares como bolivares)</p>
+        <p class="text-green-500">(Precio total de todos los productos seleccionados tanto en dolares como bolivares)</p>
         <p id="total" class="fw-semibold"></p>
-        <button class="btn btn-danger" id="registrarVentaBtn">Generar Factura y Registrar Venta</button>
+        <button class="btn  btn-ventas" id="registrarVentaBtn">Generar Factura y Registrar Venta</button>
 
 
     </div>
-    <div class=" d-flex justify-content-center ">
-        <a href="dashboar.php" class="text-decoration-none"><i class="bi bi-arrow-left"></i> Regresar a Inicio</a>
+    <div class="mt-4 text-center " style="width: 100%;">
+        <a href="dashboar.php" class="btn btn-login text-white mb-4"><i class="bi bi-arrow-left"></i> Regresar a Inicio</a>
     </div>
 
 </main>

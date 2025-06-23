@@ -36,29 +36,35 @@ if (isset($_POST['registrar_producto'])) {
  }
 
 ?>
-<div class="text-center">
-  <!-- <a href="dashboar.php">Regresar a Inicio</a> -->
 
-<h1 >Registrar Productos</h1>
-</div>
 
-<main class="d-flex justify-content-center align-items-center">
-  <div class="p-2 d-flex flex-column col-5  border border-1 border-secondary mx-4 mt-4 mb-4 rounded-2 " >
-  <form action="productos.php" method="POST" class="d-flex flex-column p-2">
+<main class=" brawn" style="height:100; width: 100%;">
+   
+ <div class="col-12 d-flex flex-row-reverse">
+        <div class="col-5 d-flex flex-row-reverse mt-2"><img src="../img/logo-v2.png" class="col-3 rounded-4 mx-2"></div>
+        <div class="text-center col-8 d-flex flex-row-reverse mt-3 align-items-center">
+    <h1 class="text-green-700">  Registrar productos</h1>
+    </div>
+         
+    </div>
+
+<section class="d-flex  flex-column justify-content-center align-items-center">
+    <div class="p-2 d-flex flex-column col-5  bg-light mx-4  mb-4 rounded-2 p-4" >
+  <form action="productos.php" method="POST" class="d-flex flex-column p-2 bg-light">
     <label class="fw-semibold" for="">Nombre del producto</label>
-    <input class="mb-2" type="text" name="nombre">
+    <input class="mb-2 p-2 border border-2 rounded-2" type="text" name="nombre">
     <label class="fw-semibold" for="">Precio del producto en $(por unidad) </label>
-    <input class="mb-2" type="text" name="precio_en_dolares">
+    <input class="mb-2 p-2 border border-2 rounded-2" type="text" name="precio_en_dolares">
      <label class="fw-semibold" for="">Cantidad(unidades)</label>
-    <input class="mb-2" type="text" name="cantidad">
-    <button type="submit" class="btn btn-secondary" name="registrar_producto">Registar producto</button>
+    <input class="mb-2 p-2 border border-2 rounded-2" type="text" name="cantidad">
+    <button type="submit" class="btn btn-login text-white" name="registrar_producto">Registar producto</button>
   </form>
 </div>
-</main>
+</section>
 
 
-<div class="mx-4">
-  <table class="table col-10" id="productos">
+<div class="mx-4 ">
+  <table class="table col-10 " id="productos">
               <thead>
                 <tr>
                  
@@ -83,7 +89,7 @@ if (isset($_POST['registrar_producto'])) {
                 <td ><?php echo $row['precio_en_dolares']*$tasa_cambio ?></td>
 
                 <td class="d-flex ">
-                  <a href="editar_producto.php?id=<?php echo $row['id']?>" class=" d-flex m-1 text-decoration-none btn btn-secondary"><i class="bi bi-pencil-fill"></i></a>
+                  <a href="editar_producto.php?id=<?php echo $row['id']?>" class=" d-flex m-1 text-decoration-none btn btn-login text-white"><i class="bi bi-pencil-fill"></i></a>
                 
             
                   <a href="eliminar_producto.php?id=<?php echo $row['id']?>" class=" d-flex m-1 text-decoration-none btn btn-danger"> <i class="bi bi-trash-fill"></i></a>
@@ -96,12 +102,12 @@ if (isset($_POST['registrar_producto'])) {
         </tbody>
              
  </table>
- <div class="mt-4 text-center">
-        <a href="dashboar.php" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Regresar a Inicio</a>
+<div class="mt-4 text-center brawn" style="width: 100%;">
+        <a href="dashboar.php" class="btn btn-login text-white mb-4"><i class="bi bi-arrow-left"></i> Regresar a Inicio</a>
     </div>
 
 </div>
-
+</main>
 
 
 

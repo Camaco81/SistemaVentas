@@ -1,0 +1,52 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+*{
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: <weight>;
+  font-style: normal;
+}
+.brawn{
+	background-color: rgb(235, 227, 210);
+}
+
+.text-brawn{
+	color: rgb(235, 227, 210) !important;
+}
+
+.btn-login{
+	background-color: rgb(104, 205, 195);
+}
+
+.btn-login:hover{
+	background-color: rgb(58, 177, 166);
+}
+
+.text-green-700{
+	color: rgb(28, 85, 80) !important;
+}
+
+.text-green-500{
+	color: rgb(104, 205, 195) !important;
+}
+.carousel-container {
+      max-width: 1000px; /* Ancho máximo del carrusel */
+      margin: 0 auto; /* Centrar el carrusel */
+ }
+ .carousel-item {
+    height: 250px; /* Define la altura fija para cada slide del carrusel */
+    background-color: #eee; /* Fondo opcional para ver el área si la imagen no la cubre */
+  }
+
+  .carousel-item img {
+    height: 100%; /* La imagen ocupará el 100% de la altura de su contenedor (.carousel-item) */
+    object-fit: contain; /* O 'cover' - ver explicación abajo */
+    object-position: center; /* Centra la imagen dentro del contenedor */
+  }
+.btn-ventas{
+	background-color: rgb(235, 227, 210)
+}
+
+.btn-ventas:hover{
+	background-color: rgb(255, 220, 147	);
+}

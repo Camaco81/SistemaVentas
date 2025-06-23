@@ -63,25 +63,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 ?>
 
 <main class="container mt-4">
-    <h1 class="mb-4">Consultar Ventas</h1>
+    <h1 class="mb-4 text-green-700">Consultar Ventas</h1>
 
     <div class="card mb-4">
-        <div class="card-header bg-primary text-white">
+        <div class="card-header brawn text-black fw-semibold">
             Buscar Ventas por Fecha
         </div>
         <div class="card-body">
             <form action="consultar_ventas.php" method="POST">
                 <div class="row g-3 align-items-end">
                     <div class="col-md-4">
-                        <label for="fecha_inicio" class="form-label">Fecha de Inicio:</label>
+                        <label for="fecha_inicio" class="form-label fw-semibold">Fecha de Inicio:</label>
                         <input type="date" class="form-control" id="fecha_inicio" name="fecha_inicio" value="<?php echo htmlspecialchars($fechaInicio); ?>" required>
                     </div>
                     <div class="col-md-4">
-                        <label for="fecha_fin" class="form-label">Fecha de Fin:</label>
+                        <label for="fecha_fin" class="form-label fw-semibold">Fecha de Fin:</label>
                         <input type="date" class="form-control" id="fecha_fin" name="fecha_fin" value="<?php echo htmlspecialchars($fechaFin); ?>" required>
                     </div>
                     <div class="col-md-4 d-grid">
-                        <button type="submit" class="btn btn-success"><i class="bi bi-search"></i> Buscar Ventas</button>
+                        <button type="submit" class="btn  btn-login text-white"><i class="bi bi-search"></i> Buscar Ventas</button>
                     </div>
                 </div>
             </form>
@@ -142,8 +142,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
     <?php endif; ?>
 
-    <div class="mt-4 text-center">
-        <a href="dashboar.php" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Regresar a Inicio</a>
+ <div class="mt-4 text-center">
+        <a href="dashboar.php" class="btn btn-login text-white mb-4"><i class="bi bi-arrow-left"></i> Regresar a Inicio</a>
     </div>
 </main>
 

@@ -38,7 +38,7 @@ include("../includes/header.php"); // Asegúrate de que este header exista y sea
                 <p>N° Factura: <?php echo htmlspecialchars($numeroFactura); ?></p>
             </div>
             <div class="text-end">
-                <h4>Tu Empresa S.A.</h4>
+                <h4>Tu Tiendita Expres</h4>
                 <p>RIF: J-12345678-9</p>
                 <p>Dirección: Calle Principal, Ciudad, Estado</p>
                 <p>Teléfono: (000) 123-4567</p>
@@ -88,10 +88,10 @@ include("../includes/header.php"); // Asegúrate de que este header exista y sea
     </div>
 
     <div class="d-flex justify-content-around mt-4">
-        <button class="btn btn-info" id="downloadPdfBtn">Descargar Factura PDF</button>
+        <button class="btn btn-login text-white" id="downloadPdfBtn">Descargar Factura PDF</button>
         
-        <button class="btn btn-primary" onclick="window.print()">Imprimir Factura</button>
-        <button class="btn btn-secondary" onclick="window.close()">Cerrar Ventana</button>
+        <button class="btn btn-ventas" onclick="window.print()">Imprimir Factura</button>
+        <button class="btn btn-danger" onclick="window.close()">Cerrar Ventana</button>
     </div>
 </div>
 

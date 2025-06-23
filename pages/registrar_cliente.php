@@ -41,12 +41,12 @@ mysqli_close($conex);
 ?>
 
 <main class="container mt-4">
-    <h1 class="mb-4">Registrar Nuevo Cliente</h1>
+    <h1 class="mb-4 text-green-700">Registrar Nuevo Cliente</h1>
 
     <?php echo $mensaje; // Mostrar mensajes de éxito o error ?>
 
     <div class="card">
-        <div class="card-header bg-primary text-white">
+        <div class="card-header brawn text-black fw-semibold">
             Datos del Cliente
         </div>
         <div class="card-body">
@@ -66,8 +66,8 @@ mysqli_close($conex);
                 </div>
             
                 
-                <button type="submit" class="btn btn-success"><i class="bi bi-person-plus"></i> Registrar Cliente</button>
-                <a href="dashboar.php" class="btn btn-secondary">Regresar</a> </form>
+                <button type="submit" class="btn btn-login text-white"><i class="bi bi-person-plus"></i> Registrar Cliente</button>
+                <a href="dashboar.php" class="btn btn-ventas">Regresar</a> </form>
         </div>
     </div>
 </main>
